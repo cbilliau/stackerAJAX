@@ -31,6 +31,29 @@ var showQuestion = function(question) {
 	return result;
 };
 
+var showAnswerers = function(answerers) {
+
+	// clone our result template code
+	var result = $('.templates .answerers').clone();
+
+	// Set the answer properties in result
+	var answererElem = result.find('.answererInfo');
+	answererElem.html('<p><a target="_blank" '+
+		'href=http://stackoverflow.com/users/' + answerers.user.user_id + ' >' +
+		answerers.user.display_name +
+		'</a></p>'
+	)
+
+	// set the .post-count for answerers property in result
+	var postCount = result.find('.post-count');
+	postCount.text(answerers.post_count);
+
+	// set the .post-count for answerers property in result
+	var score = result.find('.score');
+	score.text(answerers.score);
+
+	return result;
+};
 
 // this function takes the results object from StackOverflow
 // and returns the number of results and tags to be appended to DOM
@@ -66,6 +89,7 @@ var getUnanswered = function(tags) {
 	})
 	.done(function(result){ //this waits for the ajax to return with a succesful promise object
 		var searchResults = showSearchResults(request.tagged, result.items.length);
+		console.log(result);
 
 		$('.search-results').html(searchResults);
 		//$.each is a higher order function. It takes an array and a function as an argument.
@@ -93,12 +117,19 @@ var getTopAnswerers = function(tag) {
 		type: "GET",
 	})
 	.done(function(results){
+		var searchResults = showSearchResults( tag, results.items.length);
 		console.log(results);
+		$('.search-results').html(searchResults);
+		$.each(results.items, function(i, item) {
+			console.log(item);
+			var answerer = showAnswerers(item);
+			$('.results').append(answerer);
+		});
 	})
-// 	.fail(function(jqXHR, error){ //this waits for the ajax to return with an error promise object
-// 		var errorElem = showError(error);
-// 		$('.search-results').append(errorElem);
-// 	});
+ 	.fail(function(jqXHR, error){ //this waits for the ajax to return with an error promise object
+ 		var errorElem = showError(error);
+ 		$('.search-results').append(errorElem);
+ 	});
 };
 
 $(document).ready( function() {
@@ -112,7 +143,8 @@ $(document).ready( function() {
 	});
 	$('.inspiration-getter').submit( function(e){
 		e.preventDefault();
-		$('results').html('');
+		$('.results').html('');
+		//get value of tag user submitted
 		var tag = $(this).find("input[name='answerers']").val();
 		console.log("tag var = " + tag);
 		getTopAnswerers(tag);
