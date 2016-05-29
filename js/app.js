@@ -36,7 +36,8 @@ var showAnswerers = function(answerers) {
 	// clone our result template code
 	var result = $('.templates .answerers').clone();
 
-	// Set the answer properties in result
+	// Set the answerer properties in result
+	// Html link of answerer name
 	var answererElem = result.find('.answererInfo');
 	answererElem.html('<p><a target="_blank" '+
 		'href=http://stackoverflow.com/users/' + answerers.user.user_id + ' >' +
@@ -48,7 +49,7 @@ var showAnswerers = function(answerers) {
 	var postCount = result.find('.post-count');
 	postCount.text(answerers.post_count);
 
-	// set the .post-count for answerers property in result
+	// set the .score for answerers property in result
 	var score = result.find('.score');
 	score.text(answerers.score);
 
@@ -104,6 +105,9 @@ var getUnanswered = function(tags) {
 		$('.search-results').append(errorElem);
 	});
 };
+
+// takes a string of one tag to be searched
+// for on StackOverflow
 var getTopAnswerers = function(tag) {
 
 	var request = {
@@ -133,6 +137,7 @@ var getTopAnswerers = function(tag) {
 };
 
 $(document).ready( function() {
+
 	$('.unanswered-getter').submit( function(e){
 		e.preventDefault();
 		// zero out results if previous search has run
@@ -141,8 +146,10 @@ $(document).ready( function() {
 		var tags = $(this).find("input[name='tags']").val();
 		getUnanswered(tags);
 	});
+
 	$('.inspiration-getter').submit( function(e){
 		e.preventDefault();
+		// zero out results if previous search has run
 		$('.results').html('');
 		//get value of tag user submitted
 		var tag = $(this).find("input[name='answerers']").val();
